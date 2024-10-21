@@ -7,6 +7,7 @@
 3. PostGIS
 4. Python 3.10 or above
 5. Google Maps API key
+6. [Data](https://1drv.ms/f/s!Ar09XhBKBP2MkvwTfy-AHGe3yEV1Ug?e=yPJW7g)
 
 ## 2. Setting up the database
 
@@ -80,6 +81,7 @@
 ## 5. Storing hourly observation data in the database
 
 ### 5.1. Storing recent (or new) hourly data
+#### 5.1.1. Download the hourly data
 1. Visit the download page of [AEROS website](https://soramame.env.go.jp/download)
 2. In the first dropdown menu choose any month other than current month. For example, if the current month is November, choose any previous months, such as August and September.
 3. In the second dropdown menu choose the default option, which is 'nationwide'.
@@ -94,8 +96,87 @@
        unzip -d hourlyData ~/Downloads/data.zip
 
 8. Delete or rename the zip file to yyyymm.zip for backup. 
+#### 5.1.2. Inserting the new hourly data into the database.
+1. Open the Python file 'insertNewHourlyObservationsData.py'
+
+       vi insertNewHourlyObservationsData.py
+
+2. Go to the following line:
+
+       conn = psycopg2.connect(database="soramame", user="temp", password="BunnyBittu@143", host="163.143.165.136", port=5432)
+
+3. Specify the appropriate database, user, password, host ipaddress of postgres, and port number.
+
+       conn = psycopg2.connect(database="soramame", user="aeros", password="aeros123", host="163.143.165.136", port=5432)
+
+4. Save the file and exit.
+
 9. Run the Python program 'insertNewHourlyObservationsData.py' by specifying the folder.
 
        python3 insertNewHourlyObservationsData.py ./hourlyData
 
-### 5.2. Storing old hourly data
+### 5.2. Storing old hourly data 
+Duration of data: 2018-01-01 to 2021-03-31
+
+#### 5.2.1. Downloading the dld zip files [Truncated]
+1. Visit the download page of [AEROS website](https://soramame.env.go.jp/download)
+2. In the first dropdown menu choose any month other than current month. For example, if the current month is November, choose any previous months, such as August and September.
+3. In the second dropdown menu choose the default option, which is 'nationwide'.
+4. Click the download button.
+5. A zip file named 'data.zip' will be downloaded onto your local computer. 
+
+#### 5.2.2. Unzipping the downloaded zip files
+1. Create a temporary directory, say _temp_.
+
+       mkdir temp  
+       #temp directory will store the data.
+        
+2. Move the zip files into the _temp_ directory.
+3. Create a shell script file to read every zip file and uncompress it.
+
+       vi uncompressZipFiles.sh
+
+4. Copy and paste the following shell script 
+       
+       #add the below provided code
+       zipFiles=`ls ~/temp/*.zip`
+
+       for eachZipFile in $zipFiles
+       do
+          unzip $eachZipFile
+          rm $eachZipFile
+       done
+    
+       subZipFiles=`ls ~/temp/*.zip`
+       for eachZipfile in $subZipFiles
+       do
+              echo 'unzipping ' $eachZipfile
+              unzip $eachZipfile
+              rm -rf $eachZipfile
+       done
+
+5.  Execute the shell script.  
+
+        sh uncompressZipFiles.sh
+
+    The above program will create the folders '01' to '47'. Each folder represents a Prefecture in Japan.  
+
+#### 5.2.3.  Inserting the old hourly data into the database.
+1. Open the Python file 'insertOldHourlyObservationsData.py'
+
+       vi insertOldHourlyObservationsData.py
+
+2. Go to the following line:
+
+       conn = psycopg2.connect(database="soramame", user="temp", password="BunnyBittu@143", host="163.143.165.136", port=5432)
+
+3. Specify the appropriate database, user, password, host ipaddress of postgres, and port number.
+
+       conn = psycopg2.connect(database="soramame", user="aeros", password="aeros123", host="163.143.165.136", port=5432)
+
+4. Save the file and exit.
+
+9. Run the Python program 'insertNewHourlyObservationsData.py' by specifying the folder.
+
+       python3 insertOldHourlyObservationsData.py ./hourlyData
+

@@ -6,7 +6,7 @@ import psycopg2
 from alive_progress import alive_bar
 
 
-class newHourlyDataFormat:
+class insertNewHourlyObservationsData:
     def insert(inputDataFolder):
         files = [f for f in listdir(inputDataFolder) if isfile(join(inputDataFolder, f))]
         with alive_bar(len(files)) as bar:
@@ -85,6 +85,6 @@ if __name__ == '__main__':
     """
     if len(sys.argv) < 2:
         print("Error : Incorrect number of input parameters")
-        print("Format: python3  stationInfo.py  fileName")
+        print("Format: python3  stationInfo.py  folderName")
     else:
-        newHourlyDataFormat.insert(sys.argv[1])
+        insertNewHourlyObservationsData.insert(sys.argv[1])
