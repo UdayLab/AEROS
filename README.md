@@ -95,7 +95,40 @@
 
        unzip -d hourlyData ~/Downloads/data.zip
 
-8. Delete or rename the zip file to yyyymm.zip for backup. 
+8. [Optional] If you have multiple zips representing various months, perform this two steps.
+   
+   - Enter into the hourlyData directory
+
+         cd hourlyData
+   
+  - Create a shell script file using the following command
+
+        vi uncompressNewZipFiles.sh
+   
+  - Copy the below provided shell script code and paste it in the above file
+   
+        #add the below provided code
+        #zipFiles=`ls ./hourlyData/*.zip`
+
+        zipFiles=`ls *.zip` 
+        for eachZipFile in $zipFiles
+        do
+           unzip $eachZipFile
+           rm $eachZipFile
+        done
+  - Execute the shell script
+  
+        sh uncompressNewZipFiles.sh
+  - remove the shell script file
+
+        rm -rf uncompressNewZipFiles.sh
+
+9. Delete or rename the zip file to yyyymm_00.zip for backup. 
+
+10. Move back to the parent directory
+
+        cd ..
+
 #### 5.1.2. Inserting the new hourly data into the database.
 1. Open the Python file 'insertNewHourlyObservationsData.py'
 
@@ -128,18 +161,21 @@ Duration of data: 2018-01-01 to 2021-03-31
 #### 5.2.2. Unzipping the downloaded zip files
 1. Create a temporary directory, say _temp_.
 
-       mkdir temp  
-       #temp directory will store the data.
+       mkdir temp
         
-2. Move the zip files into the _temp_ directory.
-3. Create a shell script file to read every zip file and uncompress it.
+2. Move or upload the zip files into the _temp_ directory.
+3. Enter into the temp directory
 
-       vi uncompressZipFiles.sh
+       cd temp
 
-4. Copy and paste the following shell script 
+4. Create a shell script file to read every zip file and uncompress it.
+
+       vi uncompressOldZipFiles.sh
+
+5. Copy and paste the following shell script 
        
        #add the below provided code
-       zipFiles=`ls ~/temp/*.zip`
+       zipFiles=`ls *.zip`
 
        for eachZipFile in $zipFiles
        do
@@ -147,7 +183,7 @@ Duration of data: 2018-01-01 to 2021-03-31
           rm $eachZipFile
        done
     
-       subZipFiles=`ls ~/temp/*.zip`
+       subZipFiles=`ls *.zip`
        for eachZipfile in $subZipFiles
        do
               echo 'unzipping ' $eachZipfile
@@ -155,11 +191,19 @@ Duration of data: 2018-01-01 to 2021-03-31
               rm -rf $eachZipfile
        done
 
-5.  Execute the shell script.  
+6. Execute the shell script.  
 
-        sh uncompressZipFiles.sh
+        sh uncompressOldZipFiles.sh
 
     The above program will create the folders '01' to '47'. Each folder represents a Prefecture in Japan.  
+
+7. Delete the shell script file
+
+        rm -rf uncompressOldZipFiles.sh
+
+8. Move back to the parent directory
+
+        cd ..
 
 #### 5.2.3.  Inserting the old hourly data into the database.
 1. Open the Python file 'insertOldHourlyObservationsData.py'
@@ -178,5 +222,5 @@ Duration of data: 2018-01-01 to 2021-03-31
 
 9. Run the Python program 'insertNewHourlyObservationsData.py' by specifying the folder.
 
-       python3 insertOldHourlyObservationsData.py ./hourlyData
+       python3 insertOldHourlyObservationsData.py ./temp
 
