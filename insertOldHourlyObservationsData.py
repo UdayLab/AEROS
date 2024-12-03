@@ -63,8 +63,7 @@ class insertOldHourlyObservationsData:
         for folder in subFolders:
             try:
 
-                conn = psycopg2.connect(database="soramame", user="temp", password="BunnyBittu@143",
-                                        host="163.143.165.136", port=5432)
+                conn = psycopg2.connect(database="", user="", password="", host="", port=5432)
                 cur = conn.cursor()
 
 
